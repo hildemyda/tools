@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Mini Tools — Alpa</title>
+<meta name="description" content="Kumpulan mini tools gratis untuk desain: kolase foto, bulatkan foto, Brat Maker, IG Post, dan lainnya — langsung dari browser.">
+
+<!-- Open Graph: preview link WhatsApp/Facebook/dll. URL harus absolut. -->
+<meta property="og:title" content="Mini Tools — Alpa">
+<meta property="og:description" content="Kumpulan mini tools gratis untuk desain: kolase foto, bulatkan foto, Brat Maker, IG Post, dan lainnya — langsung dari browser.">
+<meta property="og:image" content="https://tools.alpa.my.id/og-image.jpg">
+<meta property="og:image:alt" content="Mini Tools — kumpulan tools desain gratis">
+<meta property="og:url" content="https://tools.alpa.my.id/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="id_ID">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0D1512; --ink-soft:#182420; --ink-line:#1E2E28; --ink-line-hi:#2A3E36;
+    --emerald:#10B981; --emerald-deep:#059669;
+    --text-light:#F1EEE7; --text-dim:#93A39B;
+  }
+  *{box-sizing:border-box;}
+  [hidden]{display:none !important;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--ink); color:var(--text-light); font-family:'Inter',sans-serif;
+    min-height:100vh;
+    background-image:
+      radial-gradient(ellipse 70% 40% at 50% -5%, rgba(16,185,129,0.10), transparent 70%);
+    background-repeat:no-repeat;
+  }
+  .wrap{ max-width:520px; margin:0 auto; padding:20px 20px 60px; }
+
+  /* ---- Header ---- */
+  .topbar{ border-bottom:1px solid var(--ink-line); background:rgba(13,21,18,0.85); position:sticky; top:0; z-index:10; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
+  .topbar-in{ max-width:520px; margin:0 auto; padding:14px 20px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .brand{ display:flex; align-items:center; gap:10px; }
+  .brand-icon{
+    width:30px; height:30px; border-radius:9px; background:var(--emerald);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .brand-icon svg{ width:17px; height:17px; color:var(--ink); }
+  .brand-name{ font-family:'Space Grotesk',sans-serif; font-size:19px; font-weight:700; letter-spacing:0.02em; }
+  .tagline{ color:var(--text-dim); font-size:13.5px; margin:0 0 22px; }
+
+  /* ---- Filter chips ---- */
+  .filters{
+    display:flex; gap:8px; overflow-x:auto; scrollbar-width:none;
+    margin:0 -20px 24px; padding:0 20px;
+  }
+  .filters::-webkit-scrollbar{ display:none; }
+  .chip{
+    flex-shrink:0; border:1px solid var(--ink-line); background:var(--ink-soft); color:var(--text-dim);
+    font-family:'Inter',sans-serif; font-size:13px; font-weight:600; padding:8px 15px;
+    border-radius:999px; cursor:pointer; transition:background .15s ease, color .15s ease, border-color .15s ease;
+  }
+  .chip.active{ background:var(--emerald-deep); border-color:var(--emerald-deep); color:#fff; }
+
+  /* ---- Sections ---- */
+  .group{ margin-bottom:26px; }
+  .group-head{ display:flex; align-items:center; gap:8px; margin:0 2px 12px; }
+  .group-icon{
+    width:22px; height:22px; border-radius:7px; background:var(--ink-soft); border:1px solid var(--ink-line);
+    display:flex; align-items:center; justify-content:center; color:var(--emerald); flex-shrink:0;
+  }
+  .group-icon svg{ width:12px; height:12px; }
+  .group-title{
+    font-size:11.5px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-dim);
+  }
+  .group-count{ font-size:11.5px; color:var(--text-dim); opacity:.6; margin-left:auto; }
+
+  .tools{ display:flex; flex-direction:column; gap:10px; }
+  .tool-card{
+    display:flex; align-items:center; gap:14px; text-decoration:none; color:inherit;
+    background:var(--ink-soft); border:1px solid var(--ink-line); border-radius:16px;
+    padding:14px 14px 14px 14px; transition:border-color 0.15s ease, transform 0.1s ease;
+  }
+  .tool-card:active{ transform:scale(0.98); }
+  .tool-card:hover{ border-color:var(--ink-line-hi); }
+  .tool-icon{
+    width:46px; height:46px; border-radius:13px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .tool-icon svg{ width:23px; height:23px; }
+  .tool-icon.solid{ background:var(--emerald-deep); }
+  .tool-icon.solid svg{ color:#fff; }
+  .tool-icon.dark{ background:var(--ink); border:1px solid var(--ink-line); }
+  .tool-icon.dark svg{ color:var(--emerald); }
+  .tool-icon.igpost{ background:linear-gradient(135deg,#f09433,#dc2743 55%,#bc1888); color:#fff; }
+  .tool-icon.igpost svg{ color:#fff; }
+  .tool-icon.brat{ background:#8ACE00; color:#0D1512; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:19px; }
+  .tool-body{ flex:1; min-width:0; }
+  .tool-top{ display:flex; align-items:center; gap:8px; margin-bottom:2px; }
+  .tool-name{ font-family:'Space Grotesk',sans-serif; font-size:15.5px; font-weight:600; }
+  .tool-desc{ color:var(--text-dim); font-size:12.5px; line-height:1.4; }
+  .tool-arrow{ color:var(--text-dim); flex-shrink:0; }
+  .tool-arrow svg{ width:18px; height:18px; }
+
+  .badge{
+    font-size:10.5px; font-weight:600; padding:2px 8px; border-radius:6px; white-space:nowrap;
+    background:var(--ink); border:1px solid var(--ink-line); color:var(--text-dim);
+  }
+  .badge.free{ color:var(--emerald); border-color:rgba(16,185,129,0.3); background:rgba(16,185,129,0.07); }
+
+  .empty{ text-align:center; color:var(--text-dim); font-size:13px; padding:30px 0; }
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-in">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.2"/><rect x="14" y="3" width="7" height="7" rx="1.2"/><rect x="3" y="14" width="7" height="7" rx="1.2"/><rect x="14" y="14" width="7" height="7" rx="1.2"/></svg>
+        </div>
+        <div class="brand-name">MINI TOOLS</div>
+      </div>
+    </div>
+  </header>
+  <div class="wrap">
+    <p class="tagline" id="tagline">Mini tools gratis, terutama buat desain. Tanpa login, langsung pakai.</p>
+
+    <div class="filters" id="filters">
+      <button class="chip active" data-filter="all">Semua</button>
+      <button class="chip" data-filter="editor">Editor</button>
+      <button class="chip" data-filter="maker">Maker</button>
+      <button class="chip" data-filter="utilitas">Utilitas</button>
+    </div>
+
+    <!-- ===== EDITOR ===== -->
+    <section class="group" data-group="editor">
+      <div class="group-head">
+        <div class="group-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-4l11-11 4 4L8 21H4z"/><path d="M14 7l3 3"/></svg></div>
+        <div class="group-title">Editor Foto</div>
+        <div class="group-count"></div>
+      </div>
+      <div class="tools">
+        <a class="tool-card" href="/qolase/">
+          <div class="tool-icon solid">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          </div>
+          <div class="tool-body">
+            <div class="tool-top"><div class="tool-name">Qolase</div><span class="badge free">Gratis</span></div>
+            <div class="tool-desc">Susun &amp; tempel beberapa foto jadi satu kolase grid.</div>
+          </div>
+          <div class="tool-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></div>
+        </a>
+
+        <a class="tool-card" href="/round-foto/">
+          <div class="tool-icon dark">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="8"/></svg>
+          </div>
+          <div class="tool-body">
+            <div class="tool-top"><div class="tool-name">Round Foto</div><span class="badge free">Gratis</span></div>
+            <div class="tool-desc">Bulatkan sudut atau jadikan lingkaran, lalu unduh.</div>
+          </div>
+          <div class="tool-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- ===== MAKER ===== -->
+    <section class="group" data-group="maker">
+      <div class="group-head">
+        <div class="group-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/></svg></div>
+        <div class="group-title">Maker</div>
+        <div class="group-count"></div>
+      </div>
+      <div class="tools">
+        <a class="tool-card" href="/brat-maker/">
+          <div class="tool-icon brat">B</div>
+          <div class="tool-body">
+            <div class="tool-top"><div class="tool-name">Brat Maker</div><span class="badge free">Gratis</span></div>
+            <div class="tool-desc">Bikin teks gaya cover Brat, auto-fit &amp; buram khas aslinya.</div>
+          </div>
+          <div class="tool-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></div>
+        </a>
+        <a class="tool-card" href="/ig-post/">
+          <div class="tool-icon igpost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><circle cx="12" cy="10" r="3"/><path d="M8 17h8"/></svg></div>
+          <div class="tool-body">
+            <div class="tool-top"><div class="tool-name">IG Post</div><span class="badge free">Gratis</span></div>
+            <div class="tool-desc">Bikin tampilan postingan Instagram dari fotomu, lengkap dengan frame story 9:16.</div>
+          </div>
+          <div class="tool-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></div>
+        </a>
+      </div>
+    </section>
+
+    <!-- ===== UTILITAS ===== -->
+    <section class="group" data-group="utilitas">
+      <div class="group-head">
+        <div class="group-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4 2.6-2.6z"/></svg></div>
+        <div class="group-title">Utilitas</div>
+        <div class="group-count"></div>
+      </div>
+      <div class="tools">
+        <a class="tool-card" href="/bongkar-plp/">
+          <div class="tool-icon dark">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>
+          </div>
+          <div class="tool-body">
+            <div class="tool-top"><div class="tool-name">Bongkar PLP</div><span class="badge free">Gratis</span></div>
+            <div class="tool-desc">Ambil gambar, font &amp; info desain dari file proyek Pixellab (.plp).</div>
+          </div>
+          <div class="tool-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></div>
+        </a>
+      </div>
+    </section>
+
+    <div class="empty" id="emptyMsg" hidden>Belum ada tools di kategori ini.</div>
+  </div>
+
+<script>
+(function(){
+  var filters = document.getElementById('filters');
+  var groups = [].slice.call(document.querySelectorAll('.group'));
+
+  // jumlah tools per kategori
+  groups.forEach(function(g){
+    var n = g.querySelectorAll('.tool-card').length;
+    g.querySelector('.group-count').textContent = n + ' tool';
+  });
+
+  // ---- Filter kategori ----
+  function applyFilter(name){
+    var shown = 0;
+    groups.forEach(function(g){
+      var show = name === 'all' || g.dataset.group === name;
+      g.hidden = !show;
+      if (show) shown++;
+    });
+    document.getElementById('emptyMsg').hidden = shown > 0;
+    [].forEach.call(filters.querySelectorAll('.chip'), function(c){
+      c.classList.toggle('active', c.dataset.filter === name);
+    });
+    try { sessionStorage.setItem("tools_filter", name); } catch(e) {}
+  }
+  filters.addEventListener('click', function(e){
+    var btn = e.target.closest('.chip');
+    if (btn) applyFilter(btn.dataset.filter);
+  });
+  var saved = 'all';
+  try { saved = sessionStorage.getItem("tools_filter") || 'all'; } catch(e) {}
+  if (!filters.querySelector('[data-filter="' + saved + '"]')) saved = 'all';
+  applyFilter(saved);
+})();
+</script>
+</body>
+</html>
