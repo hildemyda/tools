@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/theme.css">
-<link rel="stylesheet" href="styles.css?v=3">
+<link rel="stylesheet" href="styles.css?v=4">
 <script src="/theme.js"></script>
 <link rel="icon" href="/media/profile.jpg">
 </head>
@@ -46,10 +46,16 @@
   <div class="editor" id="editor" hidden>
 
     <div class="preview-wrap">
-      <div class="stage-outer"><canvas id="canvas"></canvas></div>
+      <div class="stage-outer"><canvas id="canvas"></canvas><div class="size-badge" id="sizeBadge">1080 × 1080</div></div>
     </div>
 
-    <button class="ghost-btn" id="changeBtn">Ganti Gambar</button>
+    <div class="action-row">
+      <button class="solid-btn" id="changeBtn" type="button">Ganti Gambar</button>
+      <button class="btn-download-main" id="downloadBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+        Unduh PNG
+      </button>
+    </div>
 
     <div class="prop-block">
       <div class="blk-head">
@@ -62,7 +68,7 @@
         <input type="range" id="rg" step="1">
         <button type="button" class="step-btn" id="stepP" aria-label="Tambah">+</button>
         <input class="num" type="number" id="nu" step="1" aria-label="Nilai">
-        <button type="button" class="reset-btn" id="rs" aria-label="Reset nilai ini" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg></button>
+        <button type="button" class="reset-btn" id="rs" aria-label="Reset nilai ini" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button>
       </div>
     </div>
 
@@ -70,11 +76,11 @@
       <div class="opt">
         <div class="opt-row">
           <div><div class="opt-name">Arah Offset</div><div class="opt-desc">Cara ubin bergeser</div></div>
-          <button type="button" class="drop-btn" id="modeBtn" aria-expanded="false"><span id="modeLabel">Baris</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+          <button type="button" class="drop-btn" id="modeBtn" aria-expanded="false"><span id="modeLabel">Baris</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
         </div>
         <div class="opt-panel" id="modePanel" hidden>
-          <button type="button" class="opt-item active" data-v="row"><span>Baris<small>Baris genap geser ke samping</small></span><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></button>
-          <button type="button" class="opt-item" data-v="col"><span>Kolom<small>Kolom genap geser ke atas/bawah</small></span><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></button>
+          <button type="button" class="opt-item active" data-v="row"><span>Baris<small>Baris genap geser ke samping</small></span><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button>
+          <button type="button" class="opt-item" data-v="col"><span>Kolom<small>Kolom genap geser ke atas/bawah</small></span><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button>
         </div>
       </div>
       <div class="opt">
@@ -83,56 +89,45 @@
           <button type="button" class="switch" id="mirrorSw" role="switch" aria-checked="false" aria-label="Mirror"></button>
         </div>
       </div>
-      <div class="opt">
-        <div class="opt-row">
-          <div><div class="opt-name">Ganti warna gambar</div><div class="opt-desc">Semua piksel jadi satu warna</div></div>
-          <button type="button" class="switch" id="tintSw" role="switch" aria-checked="false" aria-label="Ganti warna gambar"></button>
-        </div>
-        <div class="swatches" id="tintBox" hidden>
-          <button type="button" class="swatch active" data-color="#111112" style="background:#111112"></button>
-          <button type="button" class="swatch" data-color="#FFFFFF" style="background:#FFFFFF"></button>
-          <button type="button" class="swatch" data-color="#1DB954" style="background:#1DB954"></button>
-          <button type="button" class="swatch" data-color="#E15B4D" style="background:#E15B4D"></button>
-          <button type="button" class="swatch" data-color="#3B82F6" style="background:#3B82F6"></button>
-          <label class="swatch custom" for="tintCustom"><span class="rainbow"></span><input type="color" id="tintCustom" value="#10B981"></label>
-        </div>
-      </div>
     </div>
 
     <div class="prop-block">
-      <div class="section-label">Ukuran Kanvas</div>
-      <div class="section-label-row">Ukuran hasil unduhan (piksel, 64–4096)</div>
+      <div class="section-label canvas-title">Kanvas</div>
       <div class="seg" id="sizeSeg">
         <button type="button" class="active" data-w="1080" data-h="1080">1:1</button>
         <button type="button" data-w="1080" data-h="1350">4:5</button>
         <button type="button" data-w="1080" data-h="1920">9:16</button>
         <button type="button" data-w="1920" data-h="1080">16:9</button>
-        <button type="button" data-custom="1">Bebas</button>
+      </div>
+      <div class="size-line">
+        <span>Hasil <b id="sizeVal">1080 × 1080 px</b></span>
+        <button type="button" class="edit-btn" id="editSize" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Ubah
+        </button>
       </div>
       <div class="custom-size" id="customSize" hidden>
         <input class="num" type="number" id="wIn" min="64" max="4096" step="1" value="1080" aria-label="Lebar">
-        <span>×</span>
+        <button type="button" class="lock-btn" id="lockBtn" aria-pressed="false" aria-label="Kunci rasio">
+          <svg class="ic-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>
+          <svg class="ic-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </button>
         <input class="num" type="number" id="hIn" min="64" max="4096" step="1" value="1080" aria-label="Tinggi">
         <span>px</span>
       </div>
-    </div>
-
-    <div class="prop-block">
-      <div class="section-label">Latar Belakang</div>
-      <div class="section-label-row">Warna di sela-sela ubin</div>
-      <div class="swatches" id="bgSwatches">
-        <button type="button" class="swatch active" data-color="transparent"><span class="checker"></span></button>
-        <button type="button" class="swatch" data-color="#FFFFFF" style="background:#FFFFFF"></button>
-        <button type="button" class="swatch" data-color="#111112" style="background:#111112"></button>
-        <button type="button" class="swatch" data-color="#D9D9D9" style="background:#D9D9D9"></button>
-        <label class="swatch custom" for="customColor"><span class="rainbow"></span><input type="color" id="customColor" value="#10B981"></label>
+      <div class="divider"></div>
+      <div class="bg-row">
+        <span class="bg-lab">Latar</span>
+        <div class="swatches" id="bgSwatches">
+          <button type="button" class="swatch active" data-type="none" aria-label="Transparan"><span class="checker"></span></button>
+          <button type="button" class="swatch" data-type="color" data-color="#FFFFFF" aria-label="Putih" style="background:#FFFFFF"></button>
+          <button type="button" class="swatch k" data-type="color" data-color="#111112" aria-label="Hitam" style="background:#111112"></button>
+          <label class="swatch custom" id="colorSwatch" aria-label="Warna sendiri"><span class="rainbow" id="colorFill"></span><input type="color" id="customColor" value="#10B981"></label>
+          <button type="button" class="swatch imgsw" id="imgSwatch" data-type="image" aria-label="Gambar sendiri"><span class="imgfill" id="imgFill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg></span></button>
+        </div>
       </div>
+      <input type="file" id="bgImgInput" accept="image/*" hidden>
     </div>
 
-    <button class="btn-download-main" id="downloadBtn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
-      Unduh PNG
-    </button>
   </div>
 
 </div>
@@ -142,6 +137,6 @@
   <span id="toastMsg">Selesai</span>
 </div>
 
-<script src="script.js?v=3"></script>
+<script src="script.js?v=4"></script>
 </body>
 </html>

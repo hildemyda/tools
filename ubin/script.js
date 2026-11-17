@@ -2,28 +2,31 @@
   const $ = id => document.getElementById(id);
   const dropzone = $('dropzone'), fileInput = $('fileInput'), editor = $('editor'), canvas = $('canvas');
   const SRC_MAX = 800, PREVIEW_MAX = 720, CMIN = 64, CMAX = 4096;
-  let src = null, tintCv = null, raf = 0;
-  const st = { w:1080, h:1080, size:200, gap:0, offset:0, rot:0, sx:0, sy:0, mode:'row', mirror:false, bg:'transparent', tint:false, tintColor:'#111112' };
+  let src = null, bgCv = null, bgUrl = '', raf = 0;
+  const st = { w:1080, h:1080, size:200, gap:0, offset:0, rot:0, mode:'row', mirror:false, bgType:'none', bgColor:'#FFFFFF' };
 
   // ---- Gambar pola (cv = kanvas tujuan, s = skala; pratinjau kecil, unduhan skala 1) ----
   function render(cv, s){
-    const img = st.tint && tintCv ? tintCv : src;
+    const img = src;
     const W = Math.round(st.w * s), H = Math.round(st.h * s);
     cv.width = W; cv.height = H;
     const g = cv.getContext('2d');
     g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high';
-    if (st.bg !== 'transparent'){ g.fillStyle = st.bg; g.fillRect(0, 0, W, H); }
+    if (st.bgType === 'image' && bgCv){
+      // gambar latar: penuhi kanvas (cover), dipusatkan
+      const bk = Math.max(W / bgCv.width, H / bgCv.height), bw = bgCv.width * bk, bh = bgCv.height * bk;
+      g.drawImage(bgCv, (W - bw) / 2, (H - bh) / 2, bw, bh);
+    } else if (st.bgType === 'color'){ g.fillStyle = st.bgColor; g.fillRect(0, 0, W, H); }
     const k = st.size * s / Math.max(img.width, img.height);
     const snap = st.rot === 0; // tanpa rotasi: tepi ubin dibulatkan ke piksel utuh (tanpa garis tipis)
     let tw = img.width * k, th = img.height * k;
     if (snap){ tw = Math.max(1, Math.round(tw)); th = Math.max(1, Math.round(th)); }
     const cw = tw + st.gap * s, ch = th + st.gap * s, off = st.offset / 100;
-    const ox = st.sx * s, oy = st.sy * s;
-    const rmax = Math.ceil((H / 2 + Math.abs(oy)) / ch) + 2, cmax = Math.ceil((W / 2 + Math.abs(ox)) / cw) + 2;
+    const rmax = Math.ceil(H / 2 / ch) + 2, cmax = Math.ceil(W / 2 / cw) + 2;
     const rad = st.rot * Math.PI / 180, odd = n => Math.abs(n) % 2 === 1;
     for (let r = -rmax; r <= rmax; r++){
       for (let c = -cmax; c <= cmax; c++){
-        let x = W / 2 + c * cw + ox, y = H / 2 + r * ch + oy;
+        let x = W / 2 + c * cw, y = H / 2 + r * ch;
         if (st.mode === 'row' && odd(r)) x += off * cw;
         if (st.mode === 'col' && odd(c)) y += off * ch;
         const fx = st.mirror && odd(c), fy = st.mirror && odd(r);
@@ -42,15 +45,6 @@
   }
   function draw(){ if (src) render(canvas, Math.min(1, PREVIEW_MAX / Math.max(st.w, st.h))); }
   function schedule(){ if (!raf) raf = requestAnimationFrame(() => { raf = 0; draw(); }); }
-
-  // Gambar satu warna: pertahankan transparansi, ganti semua warna piksel
-  function buildTint(){
-    if (!src) return;
-    tintCv = document.createElement('canvas'); tintCv.width = src.width; tintCv.height = src.height;
-    const t = tintCv.getContext('2d');
-    t.fillStyle = st.tintColor; t.fillRect(0, 0, src.width, src.height);
-    t.globalCompositeOperation = 'destination-in'; t.drawImage(src, 0, 0);
-  }
 
   // ---- Kolom angka: batas atas langsung dipaksa, batas bawah saat selesai mengetik ----
   function bindNumber(el, apply){
@@ -75,9 +69,7 @@
     { k:'size',   l:'Ukuran',  min:30,   max:600, def:200, u:'' },
     { k:'gap',    l:'Jarak',   min:0,    max:200, def:0,   u:'' },
     { k:'offset', l:'Offset',  min:0,    max:100, def:0,   u:'%' },
-    { k:'rot',    l:'Rotasi',  min:-180, max:180, def:0,   u:'°' },
-    { k:'sx',     l:'Geser X', min:-500, max:500, def:0,   u:'' },
-    { k:'sy',     l:'Geser Y', min:-500, max:500, def:0,   u:'' }
+    { k:'rot',    l:'Rotasi',  min:-180, max:180, def:0,   u:'°' }
   ];
   let cur = 0;
   const chipsEl = $('chips'), rg = $('rg'), nu = $('nu'), rs = $('rs');
@@ -115,7 +107,7 @@
     b.addEventListener('contextmenu', e => e.preventDefault());
   });
 
-  // ---- Arah offset (buka ke bawah), mirror, ganti warna ----
+  // ---- Arah offset (buka ke bawah) dan mirror ----
   const modeBtn = $('modeBtn'), modePanel = $('modePanel');
   function setMode(v){
     st.mode = v; $('modeLabel').textContent = v === 'row' ? 'Baris' : 'Kolom';
@@ -128,43 +120,78 @@
   function setMirror(on){ st.mirror = on; $('mirrorSw').setAttribute('aria-checked', on); schedule(); }
   $('mirrorSw').addEventListener('click', () => setMirror(!st.mirror));
 
-  function setTint(on){ st.tint = on; $('tintSw').setAttribute('aria-checked', on); $('tintBox').hidden = !on; if (on) buildTint(); schedule(); }
-  $('tintSw').addEventListener('click', () => setTint(!st.tint));
-  const tintBox = $('tintBox');
-  function pickTint(color, el){
-    st.tintColor = color; tintBox.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
-    el.classList.add('active'); buildTint(); schedule();
-  }
-  tintBox.querySelectorAll('button.swatch').forEach(b => b.addEventListener('click', () => pickTint(b.dataset.color, b)));
-  $('tintCustom').addEventListener('input', e => pickTint(e.target.value, e.target.closest('.swatch')));
-
   $('resetAll').addEventListener('click', () => {
     PR.forEach(d => { st[d.k] = d.def; });
     setMode('row'); setMirror(false); sync(); schedule();
   });
 
-  // ---- Ukuran kanvas (preset + bebas) ----
-  const wIn = $('wIn'), hIn = $('hIn');
-  function setCanvas(w, h){ st.w = w; st.h = h; wIn.value = w; hIn.value = h; wIn.dataset.cur = w; hIn.dataset.cur = h; schedule(); }
-  bindNumber(wIn, v => { st.w = v; wIn.dataset.cur = v; schedule(); });
-  bindNumber(hIn, v => { st.h = v; hIn.dataset.cur = v; schedule(); });
-  wIn.dataset.cur = hIn.dataset.cur = 1080;
-  const sizeSeg = $('sizeSeg');
-  sizeSeg.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
-    sizeSeg.querySelectorAll('button').forEach(x => x.classList.remove('active'));
-    b.classList.add('active');
-    $('customSize').hidden = !b.dataset.custom;
-    if (!b.dataset.custom) setCanvas(+b.dataset.w, +b.dataset.h);
-  }));
-
-  // ---- Latar belakang ----
-  const swatches = $('bgSwatches');
-  function setBg(color, el){
-    st.bg = color; swatches.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
-    el.classList.add('active'); schedule();
+  // ---- Ukuran kanvas: preset rasio, ukuran selalu tampil, "Ubah" untuk angka bebas ----
+  const wIn = $('wIn'), hIn = $('hIn'), sizeSeg = $('sizeSeg'), lockBtn = $('lockBtn');
+  let lock = false, ratio = 1;
+  function showSize(){
+    $('sizeVal').textContent = st.w + ' × ' + st.h + ' px';
+    $('sizeBadge').textContent = st.w + ' × ' + st.h;
+    wIn.value = st.w; hIn.value = st.h; wIn.dataset.cur = st.w; hIn.dataset.cur = st.h;
+    sizeSeg.querySelectorAll('button').forEach(b => b.classList.toggle('active', +b.dataset.w === st.w && +b.dataset.h === st.h));
   }
-  swatches.querySelectorAll('button.swatch').forEach(b => b.addEventListener('click', () => setBg(b.dataset.color, b)));
-  $('customColor').addEventListener('input', e => setBg(e.target.value, e.target.closest('.swatch')));
+  function setCanvas(w, h){ st.w = w; st.h = h; showSize(); schedule(); }
+  const clampSize = v => Math.min(CMAX, Math.max(CMIN, Math.round(v)));
+  bindNumber(wIn, v => { st.w = v; if (lock) st.h = clampSize(v / ratio); showSize(); schedule(); });
+  bindNumber(hIn, v => { st.h = v; if (lock) st.w = clampSize(v * ratio); showSize(); schedule(); });
+  sizeSeg.querySelectorAll('button').forEach(b => b.addEventListener('click', () => setCanvas(+b.dataset.w, +b.dataset.h)));
+  $('editSize').addEventListener('click', () => {
+    const box = $('customSize'); box.hidden = !box.hidden; $('editSize').setAttribute('aria-expanded', !box.hidden);
+  });
+  lockBtn.addEventListener('click', () => {
+    lock = !lock; if (lock) ratio = st.w / st.h;
+    lockBtn.setAttribute('aria-pressed', lock); lockBtn.classList.toggle('on', lock);
+  });
+  showSize();
+
+  // ---- Latar belakang: transparan, putih, hitam, warna sendiri, gambar sendiri ----
+  const swatches = $('bgSwatches'), colorSwatch = $('colorSwatch'), colorFill = $('colorFill'), customColor = $('customColor');
+  const imgSwatch = $('imgSwatch'), imgFill = $('imgFill'), bgImgInput = $('bgImgInput');
+  let colorPicked = false;
+  function activate(el){ swatches.querySelectorAll('.swatch').forEach(s => s.classList.toggle('active', s === el)); schedule(); }
+  swatches.querySelectorAll('button.swatch[data-type]').forEach(b => {
+    if (b === imgSwatch) return;
+    b.addEventListener('click', () => {
+      if (b.dataset.type === 'none'){ st.bgType = 'none'; }
+      else { st.bgType = 'color'; st.bgColor = b.dataset.color; }
+      activate(b);
+    });
+  });
+  // warna sendiri: ketuk pertama membuka pemilih warna; setelah ada pilihan, ketuk saat tidak aktif hanya memakainya lagi
+  customColor.addEventListener('click', e => {
+    if (colorPicked && !colorSwatch.classList.contains('active')){
+      e.preventDefault(); st.bgType = 'color'; st.bgColor = customColor.value; activate(colorSwatch);
+    }
+  });
+  customColor.addEventListener('input', () => {
+    colorPicked = true; colorFill.classList.add('picked'); colorFill.style.background = customColor.value;
+    st.bgType = 'color'; st.bgColor = customColor.value; activate(colorSwatch);
+  });
+  // gambar sendiri: sama, ketuk saat aktif untuk mengganti gambarnya
+  imgSwatch.addEventListener('click', () => {
+    if (bgCv && !imgSwatch.classList.contains('active')){ st.bgType = 'image'; activate(imgSwatch); }
+    else bgImgInput.click();
+  });
+  bgImgInput.addEventListener('change', () => {
+    const f = bgImgInput.files[0]; bgImgInput.value = '';
+    if (!f || !f.type.startsWith('image/')) return;
+    const url = URL.createObjectURL(f), im = new Image();
+    im.onload = () => {
+      const k = Math.min(1, CMAX / Math.max(im.naturalWidth, im.naturalHeight));
+      bgCv = document.createElement('canvas');
+      bgCv.width = Math.max(1, Math.round(im.naturalWidth * k)); bgCv.height = Math.max(1, Math.round(im.naturalHeight * k));
+      const bg = bgCv.getContext('2d'); bg.imageSmoothingQuality = 'high'; bg.drawImage(im, 0, 0, bgCv.width, bgCv.height);
+      if (bgUrl) URL.revokeObjectURL(bgUrl);
+      bgUrl = url; imgFill.style.backgroundImage = 'url("' + url + '")'; imgFill.classList.add('picked');
+      st.bgType = 'image'; activate(imgSwatch);
+    };
+    im.onerror = () => { URL.revokeObjectURL(url); toast('Gambar latar tidak bisa dibuka'); };
+    im.src = url;
+  });
 
   // ---- Unduh (selalu ukuran penuh) ----
   let tt;
@@ -196,8 +223,7 @@
       src.width = Math.max(1, Math.round(im.naturalWidth * k)); src.height = Math.max(1, Math.round(im.naturalHeight * k));
       const sg = src.getContext('2d'); sg.imageSmoothingQuality = 'high'; sg.drawImage(im, 0, 0, src.width, src.height);
       URL.revokeObjectURL(url);
-      if (st.tint) buildTint();
-      dropzone.hidden = true; editor.hidden = false; sync(); draw();
+      dropzone.hidden = true; editor.hidden = false; sync(); showSize(); draw();
     };
     im.onerror = () => toast('Gambar tidak bisa dibuka');
     im.src = url;

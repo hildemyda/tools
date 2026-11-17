@@ -465,31 +465,59 @@ html.light .card-icon-green { color: #1f9d4d; }
 }
 .page-hub { padding-top: 3.75rem; }
 
-/* Judul: gradien hijau dari kanan + cahaya lembut seolah disorot lampu dari kanan */
-:root { --glow: #2DE59D; --glow-alpha: .38; }
-html.light { --glow: #12b982; --glow-alpha: .28; }
-.hero-title { position: relative; width: fit-content; margin: 0 auto; }
+/* Judul AlphOols: gradien mulus putih ke mint dari kiri ke kanan + glow tipis yang menempel di huruf, makin kuat ke kanan.
+   Nilai diukur dari desain referensi (CorelDRAW). Atur kekuatan glow lewat --glow-alpha dan jangkauannya lewat --glow-blur. */
+:root {
+    --title-end: #59E5AE;   /* warna ujung kanan gradien */
+    --glow: #2DE59D;        /* warna glow */
+    --glow-alpha: .5;       /* kekuatan glow */
+    --glow-blur: .28em;     /* jangkauan blur glow */
+}
+html.light {
+    --title-end: #12b982;
+    --glow: #12b982;
+    --glow-alpha: .3;
+}
+.hero-title {
+    position: relative;
+    width: fit-content;
+    margin: 0 auto;
+    font-size: 2.6rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+}
+@media (min-width: 768px) { .hero-title { font-size: 3.1rem; } }
+/* Glow: salinan teks berwarna hijau yang diburamkan, tepat di belakang judul, hanya menguat ke sisi kanan */
 .hero-title::before {
-    content: "";
+    content: attr(data-text);
     position: absolute;
-    inset: -55% -30% -55% 15%;
+    inset: -.6em;
+    padding: .6em;
     z-index: 0;
     pointer-events: none;
-    background: radial-gradient(ellipse 60% 55% at 100% 50%, color-mix(in srgb, var(--glow) calc(var(--glow-alpha) * 100%), transparent), transparent 100%);
-    filter: blur(26px);
+    user-select: none;
+    -webkit-user-select: none;
+    color: var(--glow);
+    -webkit-text-fill-color: var(--glow);
+    filter: blur(var(--glow-blur));
+    opacity: var(--glow-alpha);
+    -webkit-mask-image: linear-gradient(90deg, transparent 50%, #000 82%);
+    mask-image: linear-gradient(90deg, transparent 50%, #000 82%);
 }
 .brand-title {
     position: relative;
     z-index: 1;
-    font-size: 2.6rem;
-    line-height: 1.15;
+    font-size: inherit;
+    font-weight: inherit;
+    letter-spacing: inherit;
+    line-height: inherit;
     color: var(--text);
-    background: linear-gradient(90deg, var(--text) 45%, var(--glow) 100%);
+    background: linear-gradient(90deg, var(--text) 10%, var(--title-end) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
 }
-@media (min-width: 768px) { .brand-title { font-size: 3.1rem; } }
 
 .footer a { transition: color .2s ease; }
 .footer a:hover { color: var(--text); text-decoration: underline; text-underline-offset: .25em; }
