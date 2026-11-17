@@ -10,6 +10,7 @@ AlphOols: kumpulan mini tools gratis, terutama untuk desain. Situs statis (tanpa
 | `/brat-maker/` | Brat Maker |
 | `/ig-post/` | Tampilan postingan IG + frame story |
 | `/qr-code/` | Pembuat QR Code (PNG dan SVG) |
+| `/ubin/` | Ulangi gambar jadi pola ubin (offset, mirror, rotasi) |
 | `/color-picker/` | Ambil warna dari foto + palet otomatis |
 | `/bongkar-plp/` | Bongkar file Pixellab (.plp) |
 
