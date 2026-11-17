@@ -1,0 +1,64 @@
+/* Tema bersama untuk semua tool. Mengikuti gaya alpa.my.id (gelap dan terang). */
+:root{
+  --ink:#111112;
+  --ink-soft:#1c1c1e;
+  --ink-line:rgba(255,255,255,0.08);
+  --ink-line-soft:rgba(255,255,255,0.06);
+  --line-strong:#3a3a3f;
+  --chip:#26262a;
+  --chip-deep:#161618;
+  --emerald:#1db954;
+  --emerald-deep:#14883f;
+  --accent-text:#8affa1;
+  --text-light:#f4f4f5;
+  --text-dim:#9a9aa2;
+  --danger:#E15B4D;
+  --amber:#E8B25C;
+  --paper:#EFE9DD;
+  --chk1:#1c1c1e;
+  --chk2:#111112;
+  --grid:rgba(255,255,255,0.05);
+}
+html.light{
+  --ink:#f2f3f5;
+  --ink-soft:#ffffff;
+  --ink-line:rgba(0,0,0,0.08);
+  --ink-line-soft:rgba(0,0,0,0.06);
+  --line-strong:#c9cacf;
+  --chip:#e4e5e8;
+  --chip-deep:#ececef;
+  --emerald:#14883f;
+  --emerald-deep:#14883f;
+  --accent-text:#1f9d4d;
+  --text-light:#1b1b1f;
+  --text-dim:#62626b;
+  --danger:#c9372a;
+  --amber:#a8741a;
+  --chk1:#e4e5e8;
+  --chk2:#f2f3f5;
+  --grid:rgba(0,0,0,0.06);
+}
+body{ -webkit-font-smoothing:antialiased; transition:background-color .3s ease, color .3s ease; }
+
+/* Kotak-kotak tipis di background, sama seperti alpa.my.id */
+body::before{
+  content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size:30px 30px; background-position:center top;
+  -webkit-mask-image:radial-gradient(ellipse 90% 54% at 50% 50%, #000 35%, transparent 100%);
+  mask-image:radial-gradient(ellipse 90% 54% at 50% 50%, #000 35%, transparent 100%);
+}
+
+/* Tombol tema di topbar (disisipkan oleh theme.js) */
+.theme-btn{
+  margin-left:auto; display:grid; place-items:center; width:34px; height:34px; flex-shrink:0;
+  border:1px solid var(--ink-line); border-radius:50%; background:transparent; color:var(--text-dim); cursor:pointer;
+}
+.theme-btn:hover{ color:var(--text-light); }
+.theme-btn svg{ width:18px; height:18px; }
+.theme-btn .moon{ display:none; }
+html.light .theme-btn .sun{ display:none; }
+html.light .theme-btn .moon{ display:block; }
+:focus-visible{ outline:2px solid var(--emerald); outline-offset:3px; }

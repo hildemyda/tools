@@ -1,9 +1,3 @@
-:root{
-  --ink:#0D1512; --ink-soft:#182420; --ink-line:#1E2E28; --ink-line-soft:#20302A;
-  --emerald:#10B981; --emerald-deep:#059669;
-  --text-light:#F1EEE7; --text-dim:#93A39B; --danger:#E15B4D; --amber:#E8B25C;
-  --chk1:#1a2420; --chk2:#0f1915;
-}
 *{ box-sizing:border-box; }
 [hidden]{ display:none !important; }
 html,body{ margin:0; padding:0; }
@@ -48,7 +42,7 @@ body{
   display:flex; flex-direction:column; align-items:center; text-align:center; gap:6px;
   cursor:pointer; transition:border-color 0.15s ease, background 0.15s ease;
 }
-.dropzone:active, .dropzone.dragover{ border-color:var(--emerald); background:rgba(16,185,129,0.05); }
+.dropzone:active, .dropzone.dragover{ border-color:var(--emerald); background:rgba(29,185,84,0.05); }
 .dropzone-icon{
   width:52px; height:52px; border-radius:14px; background:var(--ink-soft);
   display:flex; align-items:center; justify-content:center; color:var(--emerald); margin-bottom:6px;
@@ -176,7 +170,7 @@ body{
   transition:opacity 0.2s ease, transform 0.2s ease; box-shadow:0 12px 28px -10px rgba(0,0,0,0.5);
 }
 .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
-.toast svg{ width:17px; height:17px; color:#5FD98A; flex-shrink:0; }
+.toast svg{ width:17px; height:17px; color:var(--accent-text); flex-shrink:0; }
 #toastMsg{ overflow-wrap:anywhere; }
 
 /* ---- Pratinjau desain ---- */

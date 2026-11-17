@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>QR Code | Mini Tools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/theme.css">
+<link rel="stylesheet" href="styles.css">
+<script src="/theme.js"></script>
+<link rel="icon" href="/media/profile.jpg">
+</head>
+<body>
+
+<div class="topbar">
+  <a class="back-btn" href="/" aria-label="Kembali ke daftar tools">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+  </a>
+  <div class="topbar-brand">
+    <div class="topbar-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20v.01M20 20v.01M17 20h.01"/></svg>
+    </div>
+    QR CODE
+  </div>
+</div>
+
+<div class="hint-bar">
+  <span class="hint-icon">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/></svg>
+  </span>
+  <span>Tulis teks atau link · atur tampilan · unduh</span>
+</div>
+
+<div class="content">
+
+  <div class="prop-block">
+    <div class="section-label">Isi QR</div>
+    <textarea id="textInput" placeholder="https://alpa.my.id atau teks apa saja..." maxlength="1500" rows="3"></textarea>
+    <div class="field-note" id="charNote">0 karakter</div>
+  </div>
+
+  <div class="preview-wrap">
+    <div class="preview-label">PREVIEW</div>
+    <div class="stage-outer" id="stage">
+      <canvas id="canvas" width="300" height="300"></canvas>
+      <div class="empty-hint" id="emptyHint">Ketik isi QR di atas buat mulai</div>
+    </div>
+    <div class="qr-info" id="qrInfo" aria-live="polite"></div>
+  </div>
+
+  <div class="prop-block">
+    <div class="section-label">Ketahanan (koreksi galat)</div>
+    <div class="toggle-row" id="levelRow">
+      <button type="button" class="toggle-chip" data-level="L">L · 7%</button>
+      <button type="button" class="toggle-chip active" data-level="M">M · 15%</button>
+      <button type="button" class="toggle-chip" data-level="Q">Q · 25%</button>
+      <button type="button" class="toggle-chip" data-level="H">H · 30%</button>
+    </div>
+    <div class="field-note">Makin tinggi makin tahan rusak, tapi kodenya makin padat.</div>
+  </div>
+
+  <div class="prop-block">
+    <div class="section-label">Warna</div>
+    <div class="color-row">
+      <label class="color-field"><span>QR</span><input type="color" id="fgColor" value="#000000"></label>
+      <label class="color-field"><span>Latar</span><input type="color" id="bgColor" value="#ffffff"></label>
+      <button type="button" class="toggle-chip" id="transToggle">Latar transparan</button>
+    </div>
+    <div class="field-note warn" id="colorWarn" hidden></div>
+  </div>
+
+  <div class="prop-block">
+    <div class="section-label">Ukuran</div>
+    <div class="range-row"><span class="range-name">Tepi kosong</span><input type="range" id="marginRange" min="0" max="8" step="1" value="4"><span class="range-val" id="marginVal">4</span></div>
+    <div class="toggle-row size-row" id="sizeRow">
+      <button type="button" class="toggle-chip" data-size="512">512 px</button>
+      <button type="button" class="toggle-chip active" data-size="1024">1024 px</button>
+      <button type="button" class="toggle-chip" data-size="2048">2048 px</button>
+    </div>
+  </div>
+
+  <button class="btn-download-main" id="downloadPngBtn" disabled>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+    Unduh PNG
+  </button>
+  <button class="ghost-btn" id="downloadSvgBtn" disabled>Unduh SVG (vektor, tajam di ukuran berapa pun)</button>
+
+</div>
+
+<div class="toast" id="toast">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+  <span id="toastMsg">Berhasil diunduh</span>
+</div>
+
+<script src="qr.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
