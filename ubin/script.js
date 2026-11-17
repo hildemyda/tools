@@ -1,9 +1,9 @@
 (function(){
   const $ = id => document.getElementById(id);
   const dropzone = $('dropzone'), fileInput = $('fileInput'), editor = $('editor'), canvas = $('canvas');
-  const SRC_MAX = 800, PREVIEW_MAX = 720, CMIN = 64, CMAX = 4096;
+  const SRC_MAX = 800, PREVIEW_MAX = 720, CMIN = 64, CMAX = 8192, BG_MAX = 4096;
   let src = null, bgCv = null, bgUrl = '', raf = 0;
-  const st = { w:1080, h:1080, ra:1, rb:1, res:1080, custom:false, size:200, gap:0, offset:0, rot:0, mode:'row', mirror:false, bgType:'none', bgColor:'#FFFFFF' };
+  const st = { w:1080, h:1080, preset:'post', size:200, gap:0, offset:0, rot:0, mode:'row', mirror:false, bgType:'none', bgColor:'#FFFFFF' };
 
   // ---- Gambar pola (cv = kanvas tujuan, s = skala; pratinjau kecil, unduhan skala 1) ----
   function render(cv, s){
@@ -17,11 +17,13 @@
       const bk = Math.max(W / bgCv.width, H / bgCv.height), bw = bgCv.width * bk, bh = bgCv.height * bk;
       g.drawImage(bgCv, (W - bw) / 2, (H - bh) / 2, bw, bh);
     } else if (st.bgType === 'color'){ g.fillStyle = st.bgColor; g.fillRect(0, 0, W, H); }
-    const k = st.size * s / Math.max(img.width, img.height);
+    // ukuran & jarak dihitung relatif ke sisi terpendek kanvas (acuan 1080), jadi tampilan pola tetap sama saat resolusi diganti
+    const u = Math.min(st.w, st.h) / 1080;
+    const k = st.size * u * s / Math.max(img.width, img.height);
     const snap = st.rot === 0; // tanpa rotasi: tepi ubin dibulatkan ke piksel utuh (tanpa garis tipis)
     let tw = img.width * k, th = img.height * k;
     if (snap){ tw = Math.max(1, Math.round(tw)); th = Math.max(1, Math.round(th)); }
-    const cw = tw + st.gap * s, ch = th + st.gap * s, off = st.offset / 100;
+    const cw = tw + st.gap * u * s, ch = th + st.gap * u * s, off = st.offset / 100;
     const rmax = Math.ceil(H / 2 / ch) + 2, cmax = Math.ceil(W / 2 / cw) + 2;
     const rad = st.rot * Math.PI / 180, odd = n => Math.abs(n) % 2 === 1;
     for (let r = -rmax; r <= rmax; r++){
@@ -133,39 +135,25 @@
     setMode('row'); setMirror(false); sync(); schedule();
   });
 
-  // ---- Ukuran kanvas: rasio + resolusi (sisi terpendek); ketuk angka ukuran untuk ketik bebas ----
-  const wIn = $('wIn'), hIn = $('hIn'), ratioSeg = $('ratioSeg'), resSeg = $('resSeg');
-  function calc(){
-    if (st.custom) return;
-    if (st.ra <= st.rb){ st.w = st.res; st.h = Math.round(st.res * st.rb / st.ra); }
-    else { st.w = Math.round(st.res * st.ra / st.rb); st.h = st.res; }
-  }
-  const matches = b => { const a = +b.dataset.a, c = +b.dataset.b; return !st.custom && ((a === st.ra && c === st.rb) || (a === 4 && c === 5 && st.ra === 5 && st.rb === 4)); };
+  // ---- Ukuran kanvas: satu dropdown preset + "Bebas" untuk ketik sendiri ----
+  const wIn = $('wIn'), hIn = $('hIn'), sizeBtn = $('sizeBtn'), sizePanel = $('sizePanel');
+  const NAMES = { post:'Post 1:1', feed:'Feed 4:5', story:'Story 9:16', banner:'Banner 16:9', custom:'Bebas' };
   function showSize(){
     const t = st.w + ' × ' + st.h;
-    $('sizeVal').textContent = t; $('sizeLabel').textContent = t + ' px';
+    $('sizeName').textContent = NAMES[st.preset]; $('sizeDim').textContent = t; $('sizeLabel').textContent = t + ' px';
     wIn.value = st.w; hIn.value = st.h; wIn.dataset.cur = st.w; hIn.dataset.cur = st.h;
-    ratioSeg.querySelectorAll('button[data-a]').forEach(b => {
-      const on = matches(b); b.classList.toggle('active', on);
-      if (+b.dataset.a === 4) b.textContent = (on && st.ra === 5) ? '5:4' : '4:5';
-    });
-    resSeg.querySelectorAll('button').forEach(b => b.classList.toggle('active', !st.custom && +b.dataset.r === st.res));
+    $('customSize').hidden = st.preset !== 'custom';
+    sizePanel.querySelectorAll('.opt-item').forEach(x => x.classList.toggle('active', x.dataset.p === st.preset));
   }
-  function applySize(){ calc(); showSize(); schedule(); }
-    bindNumber(wIn, v => { st.custom = true; st.w = v; showSize(); schedule(); });
-  bindNumber(hIn, v => { st.custom = true; st.h = v; showSize(); schedule(); });
-  ratioSeg.querySelectorAll('button[data-a]').forEach(b => b.addEventListener('click', () => {
-    if (matches(b)) return;
-    st.custom = false; st.ra = +b.dataset.a; st.rb = +b.dataset.b; applySize();
+  function toggleSize(open){ sizePanel.hidden = !open; sizeBtn.setAttribute('aria-expanded', open); }
+  sizeBtn.addEventListener('click', () => toggleSize(sizePanel.hidden));
+  sizePanel.querySelectorAll('.opt-item').forEach(b => b.addEventListener('click', () => {
+    st.preset = b.dataset.p;
+    if (st.preset !== 'custom'){ st.w = +b.dataset.w; st.h = +b.dataset.h; }
+    showSize(); toggleSize(false); schedule();
   }));
-  $('rotBtn').addEventListener('click', () => {
-    if (st.custom){ const t = st.w; st.w = st.h; st.h = t; showSize(); schedule(); return; }
-    const t = st.ra; st.ra = st.rb; st.rb = t; applySize();
-  });
-  resSeg.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { st.custom = false; st.res = +b.dataset.r; applySize(); }));
-  $('editSize').addEventListener('click', () => {
-    const box = $('customSize'); box.hidden = !box.hidden; $('editSize').setAttribute('aria-expanded', !box.hidden);
-  });
+  bindNumber(wIn, v => { st.w = v; showSize(); schedule(); });
+  bindNumber(hIn, v => { st.h = v; showSize(); schedule(); });
   showSize();
 
   // ---- Latar belakang: transparan, putih, hitam, warna sendiri, gambar sendiri ----
@@ -201,7 +189,7 @@
     if (!f || !f.type.startsWith('image/')) return;
     const url = URL.createObjectURL(f), im = new Image();
     im.onload = () => {
-      const k = Math.min(1, CMAX / Math.max(im.naturalWidth, im.naturalHeight));
+      const k = Math.min(1, BG_MAX / Math.max(im.naturalWidth, im.naturalHeight));
       bgCv = document.createElement('canvas');
       bgCv.width = Math.max(1, Math.round(im.naturalWidth * k)); bgCv.height = Math.max(1, Math.round(im.naturalHeight * k));
       const bg = bgCv.getContext('2d'); bg.imageSmoothingQuality = 'high'; bg.drawImage(im, 0, 0, bgCv.width, bgCv.height);
@@ -222,7 +210,7 @@
   $('downloadBtn').addEventListener('click', () => {
     if (!src) return;
     const out = document.createElement('canvas');
-    render(out, 1);
+    try { render(out, 1); } catch (e) { return toast('Gagal, coba ukuran kanvas lebih kecil'); }
     out.toBlob(blob => {
       if (!blob) return toast('Gagal, coba ukuran kanvas lebih kecil');
       const a = document.createElement('a');

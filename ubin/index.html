@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/theme.css">
-<link rel="stylesheet" href="styles.css?v=5">
+<link rel="stylesheet" href="styles.css?v=6">
 <script src="/theme.js"></script>
 <link rel="icon" href="/media/profile.jpg">
 </head>
@@ -47,31 +47,25 @@
 
     <div class="preview-wrap">
       <div class="stage-outer"><div class="stage-inner" id="stageInner"><canvas id="canvas"></canvas></div></div>
-      <div class="preview-meta"><span>Preview</span><b id="sizeLabel">1080 × 1080 px</b></div>
+      <div class="preview-meta" id="sizeLabel">1080 × 1080 px</div>
     </div>
 
     <div class="prop-block">
       <div class="section-label canvas-title">Kanvas</div>
-      <div class="seg" id="ratioSeg">
-        <button type="button" class="active" data-a="1" data-b="1">1:1</button>
-        <button type="button" data-a="4" data-b="5">4:5</button>
-        <button type="button" data-a="9" data-b="16">9:16</button>
-        <button type="button" data-a="16" data-b="9">16:9</button>
-        <button type="button" class="rot-btn" id="rotBtn" aria-label="Putar orientasi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m8 3-4 4 4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg></button>
-      </div>
-      <div class="size-row">
-        <button type="button" class="size-btn" id="editSize" aria-expanded="false" aria-label="Ketik ukuran sendiri"><b id="sizeVal">1080 × 1080</b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
-        <div class="res-seg" id="resSeg">
-          <button type="button" data-r="720">720</button>
-          <button type="button" class="active" data-r="1080">1080</button>
-          <button type="button" data-r="1440">2K</button>
-          <button type="button" data-r="2160">4K</button>
-        </div>
+      <button type="button" class="drop-btn size-dd" id="sizeBtn" aria-expanded="false">
+        <span class="dd-main"><b id="sizeName">Post 1:1</b><span id="sizeDim">1080 × 1080</span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="opt-panel" id="sizePanel" hidden>
+        <button type="button" class="opt-item active" data-p="post" data-w="1080" data-h="1080"><span>Post <em>1:1</em></span><b class="dim">1080 × 1080</b><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button>
+        <button type="button" class="opt-item" data-p="feed" data-w="1080" data-h="1350"><span>Feed <em>4:5</em></span><b class="dim">1080 × 1350</b><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button>
+        <button type="button" class="opt-item" data-p="story" data-w="1080" data-h="1920"><span>Story <em>9:16</em></span><b class="dim">1080 × 1920</b><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button>
+        <button type="button" class="opt-item" data-p="banner" data-w="1920" data-h="1080"><span>Banner <em>16:9</em></span><b class="dim">1920 × 1080</b><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button>
+        <button type="button" class="opt-item" data-p="custom"><span>Bebas<small>Ketik ukuran sendiri</small></span><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button>
       </div>
       <div class="custom-size" id="customSize" hidden>
-        <input class="num" type="number" id="wIn" min="64" max="4096" step="1" value="1080" aria-label="Lebar">
+        <input class="num" type="number" id="wIn" min="64" max="8192" step="1" value="1080" aria-label="Lebar">
         <span>×</span>
-        <input class="num" type="number" id="hIn" min="64" max="4096" step="1" value="1080" aria-label="Tinggi">
+        <input class="num" type="number" id="hIn" min="64" max="8192" step="1" value="1080" aria-label="Tinggi">
         <span>px</span>
       </div>
       <div class="divider"></div>
@@ -140,6 +134,6 @@
   <span id="toastMsg">Selesai</span>
 </div>
 
-<script src="script.js?v=5"></script>
+<script src="script.js?v=6"></script>
 </body>
 </html>
