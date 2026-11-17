@@ -3,7 +3,7 @@
   const dropzone = $('dropzone'), fileInput = $('fileInput'), editor = $('editor'), canvas = $('canvas');
   const SRC_MAX = 800, PREVIEW_MAX = 720, CMIN = 64, CMAX = 4096;
   let src = null, bgCv = null, bgUrl = '', raf = 0;
-  const st = { w:1080, h:1080, size:200, gap:0, offset:0, rot:0, mode:'row', mirror:false, bgType:'none', bgColor:'#FFFFFF' };
+  const st = { w:1080, h:1080, ra:1, rb:1, res:1080, custom:false, size:200, gap:0, offset:0, rot:0, mode:'row', mirror:false, bgType:'none', bgColor:'#FFFFFF' };
 
   // ---- Gambar pola (cv = kanvas tujuan, s = skala; pratinjau kecil, unduhan skala 1) ----
   function render(cv, s){
@@ -43,7 +43,15 @@
       }
     }
   }
-  function draw(){ if (src) render(canvas, Math.min(1, PREVIEW_MAX / Math.max(st.w, st.h))); }
+  const stageIn = $('stageInner');
+  // kanvas ditampilkan pas di dalam kotak preview persegi
+  function fit(){
+    const bw = stageIn.clientWidth, bh = stageIn.clientHeight; if (!bw || !bh) return;
+    const k = Math.min(bw / st.w, bh / st.h);
+    canvas.style.width = Math.max(1, Math.round(st.w * k)) + 'px'; canvas.style.height = Math.max(1, Math.round(st.h * k)) + 'px';
+  }
+  window.addEventListener('resize', fit);
+  function draw(){ if (src){ fit(); render(canvas, Math.min(1, PREVIEW_MAX / Math.max(st.w, st.h))); } }
   function schedule(){ if (!raf) raf = requestAnimationFrame(() => { raf = 0; draw(); }); }
 
   // ---- Kolom angka: batas atas langsung dipaksa, batas bawah saat selesai mengetik ----
@@ -125,26 +133,38 @@
     setMode('row'); setMirror(false); sync(); schedule();
   });
 
-  // ---- Ukuran kanvas: preset rasio, ukuran selalu tampil, "Ubah" untuk angka bebas ----
-  const wIn = $('wIn'), hIn = $('hIn'), sizeSeg = $('sizeSeg'), lockBtn = $('lockBtn');
-  let lock = false, ratio = 1;
-  function showSize(){
-    $('sizeVal').textContent = st.w + ' × ' + st.h + ' px';
-    $('sizeBadge').textContent = st.w + ' × ' + st.h;
-    wIn.value = st.w; hIn.value = st.h; wIn.dataset.cur = st.w; hIn.dataset.cur = st.h;
-    sizeSeg.querySelectorAll('button').forEach(b => b.classList.toggle('active', +b.dataset.w === st.w && +b.dataset.h === st.h));
+  // ---- Ukuran kanvas: rasio + resolusi (sisi terpendek); ketuk angka ukuran untuk ketik bebas ----
+  const wIn = $('wIn'), hIn = $('hIn'), ratioSeg = $('ratioSeg'), resSeg = $('resSeg');
+  function calc(){
+    if (st.custom) return;
+    if (st.ra <= st.rb){ st.w = st.res; st.h = Math.round(st.res * st.rb / st.ra); }
+    else { st.w = Math.round(st.res * st.ra / st.rb); st.h = st.res; }
   }
-  function setCanvas(w, h){ st.w = w; st.h = h; showSize(); schedule(); }
-  const clampSize = v => Math.min(CMAX, Math.max(CMIN, Math.round(v)));
-  bindNumber(wIn, v => { st.w = v; if (lock) st.h = clampSize(v / ratio); showSize(); schedule(); });
-  bindNumber(hIn, v => { st.h = v; if (lock) st.w = clampSize(v * ratio); showSize(); schedule(); });
-  sizeSeg.querySelectorAll('button').forEach(b => b.addEventListener('click', () => setCanvas(+b.dataset.w, +b.dataset.h)));
+  const matches = b => { const a = +b.dataset.a, c = +b.dataset.b; return !st.custom && ((a === st.ra && c === st.rb) || (a === 4 && c === 5 && st.ra === 5 && st.rb === 4)); };
+  function showSize(){
+    const t = st.w + ' × ' + st.h;
+    $('sizeVal').textContent = t; $('sizeLabel').textContent = t + ' px';
+    wIn.value = st.w; hIn.value = st.h; wIn.dataset.cur = st.w; hIn.dataset.cur = st.h;
+    ratioSeg.querySelectorAll('button[data-a]').forEach(b => {
+      const on = matches(b); b.classList.toggle('active', on);
+      if (+b.dataset.a === 4) b.textContent = (on && st.ra === 5) ? '5:4' : '4:5';
+    });
+    resSeg.querySelectorAll('button').forEach(b => b.classList.toggle('active', !st.custom && +b.dataset.r === st.res));
+  }
+  function applySize(){ calc(); showSize(); schedule(); }
+    bindNumber(wIn, v => { st.custom = true; st.w = v; showSize(); schedule(); });
+  bindNumber(hIn, v => { st.custom = true; st.h = v; showSize(); schedule(); });
+  ratioSeg.querySelectorAll('button[data-a]').forEach(b => b.addEventListener('click', () => {
+    if (matches(b)) return;
+    st.custom = false; st.ra = +b.dataset.a; st.rb = +b.dataset.b; applySize();
+  }));
+  $('rotBtn').addEventListener('click', () => {
+    if (st.custom){ const t = st.w; st.w = st.h; st.h = t; showSize(); schedule(); return; }
+    const t = st.ra; st.ra = st.rb; st.rb = t; applySize();
+  });
+  resSeg.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { st.custom = false; st.res = +b.dataset.r; applySize(); }));
   $('editSize').addEventListener('click', () => {
     const box = $('customSize'); box.hidden = !box.hidden; $('editSize').setAttribute('aria-expanded', !box.hidden);
-  });
-  lockBtn.addEventListener('click', () => {
-    lock = !lock; if (lock) ratio = st.w / st.h;
-    lockBtn.setAttribute('aria-pressed', lock); lockBtn.classList.toggle('on', lock);
   });
   showSize();
 
