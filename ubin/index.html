@@ -52,41 +52,41 @@
     <button class="ghost-btn" id="changeBtn">Ganti Gambar</button>
 
     <div class="prop-block">
-      <div class="prop-row"><label>Ukuran</label><div class="slider-control">
-        <input type="range" id="size" min="30" max="600" step="1" value="200">
-        <div class="stepper"><button type="button" class="step-btn" data-for="size" data-step="-5">−</button><span class="step-value" id="sizeVal">200</span><button type="button" class="step-btn" data-for="size" data-step="5">+</button></div>
-      </div></div>
-      <div class="prop-row"><label>Jarak</label><div class="slider-control">
-        <input type="range" id="gap" min="0" max="200" step="1" value="0">
-        <div class="stepper"><button type="button" class="step-btn" data-for="gap" data-step="-2">−</button><span class="step-value" id="gapVal">0</span><button type="button" class="step-btn" data-for="gap" data-step="2">+</button></div>
-      </div></div>
-      <div class="prop-row"><label>Offset</label><div class="slider-control">
-        <input type="range" id="offset" min="0" max="100" step="1" value="0">
-        <div class="stepper"><button type="button" class="step-btn" data-for="offset" data-step="-5">−</button><span class="step-value" id="offsetVal">0</span><button type="button" class="step-btn" data-for="offset" data-step="5">+</button></div>
-      </div></div>
-      <div class="prop-row"><label>Rotasi</label><div class="slider-control">
-        <input type="range" id="rot" min="-180" max="180" step="1" value="0">
-        <div class="stepper"><button type="button" class="step-btn" data-for="rot" data-step="-5">−</button><span class="step-value" id="rotVal">0</span><button type="button" class="step-btn" data-for="rot" data-step="5">+</button></div>
-      </div></div>
+      <div class="blk-head">
+        <div class="section-label">Pengaturan Pola</div>
+        <button type="button" class="link-btn" id="resetAll">Reset semua</button>
+      </div>
+      <div id="sliders"></div>
     </div>
 
     <div class="prop-block">
-      <div class="section-label">Arah Offset</div>
-      <div class="section-label-row">Baris: tiap baris genap bergeser ke samping. Kolom: tiap kolom genap bergeser ke atas/bawah.</div>
-      <div class="seg" id="modeSeg"><button type="button" class="active" data-v="row">Baris</button><button type="button" data-v="col">Kolom</button></div>
-      <div class="section-label" style="margin-top:16px">Mirror</div>
-      <div class="section-label-row">Balik ubin secara selang-seling</div>
-      <div class="seg" id="mirrorSeg"><button type="button" class="active" data-v="0">Mati</button><button type="button" data-v="1">Nyala</button></div>
+      <div class="opt">
+        <div class="opt-name">Arah Offset</div>
+        <div class="opt-desc">Baris: geser ke samping. Kolom: geser ke atas/bawah.</div>
+        <select class="sel" id="modeSel"><option value="row">Baris</option><option value="col">Kolom</option></select>
+      </div>
+      <div class="opt">
+        <div class="opt-name">Mirror</div>
+        <div class="opt-desc">Balik ubin secara selang-seling.</div>
+        <select class="sel" id="mirrorSel"><option value="0">Mati</option><option value="1">Nyala</option></select>
+      </div>
     </div>
 
     <div class="prop-block">
       <div class="section-label">Ukuran Kanvas</div>
-      <div class="section-label-row">Ukuran hasil unduhan (piksel)</div>
+      <div class="section-label-row">Ukuran hasil unduhan (piksel, 64–4096)</div>
       <div class="seg" id="sizeSeg">
         <button type="button" class="active" data-w="1080" data-h="1080">1:1</button>
         <button type="button" data-w="1080" data-h="1350">4:5</button>
         <button type="button" data-w="1080" data-h="1920">9:16</button>
         <button type="button" data-w="1920" data-h="1080">16:9</button>
+        <button type="button" data-custom="1">Bebas</button>
+      </div>
+      <div class="custom-size" id="customSize" hidden>
+        <input class="num" type="number" id="wIn" min="64" max="4096" step="1" value="1080" aria-label="Lebar">
+        <span>×</span>
+        <input class="num" type="number" id="hIn" min="64" max="4096" step="1" value="1080" aria-label="Tinggi">
+        <span>px</span>
       </div>
     </div>
 
