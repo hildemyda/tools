@@ -1,11 +1,11 @@
-# tools.alpa.my.id — Mini Tools
+# tools.alpa.my.id — AlphOols
 
-Kumpulan mini tools gratis, terutama untuk desain. Situs statis (tanpa server, tanpa login), berjalan di GitHub Pages.
+AlphOols: kumpulan mini tools gratis, terutama untuk desain. Situs statis (tanpa server, tanpa login), berjalan di GitHub Pages.
 
 | URL | Tool |
 |---|---|
 | `/` | Daftar tools |
-| `/kolase/` | Kolase foto (Qolase) |
+| `/kolase/` | Kolase foto |
 | `/round-foto/` | Bulatkan sudut foto |
 | `/brat-maker/` | Brat Maker |
 | `/ig-post/` | Tampilan postingan IG + frame story |

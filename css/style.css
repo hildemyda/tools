@@ -423,8 +423,8 @@ dialog.viewer::backdrop { background: rgba(0, 0, 0, .8); backdrop-filter: blur(3
 
 /* Halaman 404 */
 .nf {
-    min-height: calc(100vh - 3.6rem); /* cadangan untuk browser lama */
-    min-height: calc(100svh - 3.6rem);
+    min-height: 100vh; /* cadangan untuk browser lama */
+    min-height: 100svh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -450,3 +450,46 @@ dialog.viewer::backdrop { background: rgba(0, 0, 0, .8); backdrop-filter: blur(3
 /* Ikon hijau untuk kartu Murdes (selain itu sama dengan kartu lain) */
 .card-icon-green { color: #8affa1; }
 html.light .card-icon-green { color: #1f9d4d; }
+
+
+/* ===== Khusus hub AlphOols ===== */
+/* Tombol tema mengambang di kanan atas (tanpa top bar), dengan latar blur seperti bar sebelumnya */
+.top-theme.theme-float {
+    position: fixed;
+    top: .75rem;
+    right: 1rem;
+    z-index: 5;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+}
+.page-hub { padding-top: 3.75rem; }
+
+/* Judul: gradien hijau dari kanan + cahaya lembut seolah disorot lampu dari kanan */
+:root { --glow: #2DE59D; --glow-alpha: .38; }
+html.light { --glow: #12b982; --glow-alpha: .28; }
+.hero-title { position: relative; width: fit-content; margin: 0 auto; }
+.hero-title::before {
+    content: "";
+    position: absolute;
+    inset: -55% -30% -55% 15%;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse 60% 55% at 100% 50%, color-mix(in srgb, var(--glow) calc(var(--glow-alpha) * 100%), transparent), transparent 100%);
+    filter: blur(26px);
+}
+.brand-title {
+    position: relative;
+    z-index: 1;
+    font-size: 2.6rem;
+    line-height: 1.15;
+    color: var(--text);
+    background: linear-gradient(90deg, var(--text) 45%, var(--glow) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+@media (min-width: 768px) { .brand-title { font-size: 3.1rem; } }
+
+.footer a { transition: color .2s ease; }
+.footer a:hover { color: var(--text); text-decoration: underline; text-underline-offset: .25em; }
