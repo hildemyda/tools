@@ -89,6 +89,7 @@
   const emptyHint = document.getElementById('emptyHint');
   const downloadPngBtn = document.getElementById('downloadPngBtn');
   const downloadWebpBtn = document.getElementById('downloadWebpBtn');
+  const shareBtn = document.getElementById('shareBtn');
   const toast = document.getElementById('toast');
 
   [darkToggle, hdToggle, nobgToggle].forEach(chip => {
@@ -112,11 +113,13 @@
       emptyHint.classList.remove('hidden');
       downloadPngBtn.disabled = true;
       downloadWebpBtn.disabled = true;
+      shareBtn.disabled = true;
       return;
     }
     emptyHint.classList.add('hidden');
     downloadPngBtn.disabled = false;
     downloadWebpBtn.disabled = false;
+    shareBtn.disabled = false;
 
     const dark = darkToggle.classList.contains('active');
     const hd = hdToggle.classList.contains('active');
@@ -166,18 +169,62 @@
     finalCtx.drawImage(workCanvas, 0, 0, CANVAS_SIZE, CANVAS_SIZE);
   }
 
-  function download(mime, ext){
-    const link = document.createElement('a');
-    link.download = `brat.${ext}`;
-    link.href = canvas.toDataURL(mime);
-    link.click();
-    showToast(ext === 'webp' ? 'WebP siap dipakai jadi stiker' : 'Berhasil diunduh');
+  const WA_LIMIT = 100 * 1024; // batas ukuran stiker WhatsApp
+
+  function toBlob(mime, q){
+    return new Promise(res => canvas.toBlob(res, mime, q));
   }
 
-  function handleDownload(mime, ext){ download(mime, ext); }
+  // WebP: turunkan kualitas bertahap sampai di bawah 100KB
+  async function webpUnder100k(){
+    let blob = null;
+    for (const q of [0.95, 0.85, 0.75, 0.65, 0.55, 0.45, 0.35, 0.25, 0.15]){
+      blob = await toBlob('image/webp', q);
+      if (!blob || blob.size <= WA_LIMIT) break;
+    }
+    return blob;
+  }
+
+  function saveBlob(blob, name){
+    const link = document.createElement('a');
+    link.download = name;
+    link.href = URL.createObjectURL(blob);
+    document.body.appendChild(link); link.click(); link.remove();
+    setTimeout(() => URL.revokeObjectURL(link.href), 4000);
+  }
+
+  const kb = b => Math.round(b.size / 1024) + 'KB';
+
+  async function handleDownload(mime, ext){
+    if (ext === 'webp'){
+      const blob = await webpUnder100k();
+      if (!blob) return showToast('Gagal membuat WebP');
+      saveBlob(blob, 'brat.webp');
+      return showToast(blob.size <= WA_LIMIT ? 'WebP ' + kb(blob) + ', siap jadi stiker' : 'WebP ' + kb(blob) + ', masih di atas 100KB');
+    }
+    const blob = await toBlob(mime);
+    if (!blob) return showToast('Gagal membuat file');
+    saveBlob(blob, 'brat.' + ext);
+    showToast('Berhasil diunduh');
+  }
+
+  // Bagikan lewat menu bagikan HP, lalu pilih WhatsApp
+  async function handleShare(){
+    const blob = await webpUnder100k();
+    if (!blob) return showToast('Gagal membuat WebP');
+    const file = new File([blob], 'brat.webp', { type: 'image/webp' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })){
+      try { await navigator.share({ files: [file] }); }
+      catch (e) { if (e && e.name !== 'AbortError') showToast('Gagal membagikan'); }
+    } else {
+      saveBlob(blob, 'brat.webp');
+      showToast('Bagikan tidak didukung, WebP diunduh');
+    }
+  }
 
   downloadPngBtn.addEventListener('click', () => handleDownload('image/png', 'png'));
   downloadWebpBtn.addEventListener('click', () => handleDownload('image/webp', 'webp'));
+  shareBtn.addEventListener('click', handleShare);
 
   function showToast(msg){
     document.getElementById('toastMsg').textContent = msg;

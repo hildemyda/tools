@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/theme.css">
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css?v=3">
 <script src="/theme.js"></script>
 <link rel="icon" href="/media/profile.jpg">
 </head>
@@ -56,19 +56,46 @@
         <div class="section-label">Pengaturan Pola</div>
         <button type="button" class="link-btn" id="resetAll">Reset semua</button>
       </div>
-      <div id="sliders"></div>
+      <div class="chips" id="chips"></div>
+      <div class="ctl">
+        <button type="button" class="step-btn" id="stepM" aria-label="Kurangi">−</button>
+        <input type="range" id="rg" step="1">
+        <button type="button" class="step-btn" id="stepP" aria-label="Tambah">+</button>
+        <input class="num" type="number" id="nu" step="1" aria-label="Nilai">
+        <button type="button" class="reset-btn" id="rs" aria-label="Reset nilai ini" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg></button>
+      </div>
     </div>
 
     <div class="prop-block">
       <div class="opt">
-        <div class="opt-name">Arah Offset</div>
-        <div class="opt-desc">Baris: geser ke samping. Kolom: geser ke atas/bawah.</div>
-        <select class="sel" id="modeSel"><option value="row">Baris</option><option value="col">Kolom</option></select>
+        <div class="opt-row">
+          <div><div class="opt-name">Arah Offset</div><div class="opt-desc">Cara ubin bergeser</div></div>
+          <button type="button" class="drop-btn" id="modeBtn" aria-expanded="false"><span id="modeLabel">Baris</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+        </div>
+        <div class="opt-panel" id="modePanel" hidden>
+          <button type="button" class="opt-item active" data-v="row"><span>Baris<small>Baris genap geser ke samping</small></span><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></button>
+          <button type="button" class="opt-item" data-v="col"><span>Kolom<small>Kolom genap geser ke atas/bawah</small></span><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></button>
+        </div>
       </div>
       <div class="opt">
-        <div class="opt-name">Mirror</div>
-        <div class="opt-desc">Balik ubin secara selang-seling.</div>
-        <select class="sel" id="mirrorSel"><option value="0">Mati</option><option value="1">Nyala</option></select>
+        <div class="opt-row">
+          <div><div class="opt-name">Mirror</div><div class="opt-desc">Balik ubin selang-seling</div></div>
+          <button type="button" class="switch" id="mirrorSw" role="switch" aria-checked="false" aria-label="Mirror"></button>
+        </div>
+      </div>
+      <div class="opt">
+        <div class="opt-row">
+          <div><div class="opt-name">Ganti warna gambar</div><div class="opt-desc">Semua piksel jadi satu warna</div></div>
+          <button type="button" class="switch" id="tintSw" role="switch" aria-checked="false" aria-label="Ganti warna gambar"></button>
+        </div>
+        <div class="swatches" id="tintBox" hidden>
+          <button type="button" class="swatch active" data-color="#111112" style="background:#111112"></button>
+          <button type="button" class="swatch" data-color="#FFFFFF" style="background:#FFFFFF"></button>
+          <button type="button" class="swatch" data-color="#1DB954" style="background:#1DB954"></button>
+          <button type="button" class="swatch" data-color="#E15B4D" style="background:#E15B4D"></button>
+          <button type="button" class="swatch" data-color="#3B82F6" style="background:#3B82F6"></button>
+          <label class="swatch custom" for="tintCustom"><span class="rainbow"></span><input type="color" id="tintCustom" value="#10B981"></label>
+        </div>
       </div>
     </div>
 
@@ -115,6 +142,6 @@
   <span id="toastMsg">Selesai</span>
 </div>
 
-<script src="script.js"></script>
+<script src="script.js?v=3"></script>
 </body>
 </html>
